@@ -392,10 +392,10 @@ global void do_declaration()
   int val;
 
   nterms = nnonts = 0;
-  intern_gsym(get_lang_id() == LANG_PHP ? "EOF" : "$EOF", YES);
+  intern_gsym((get_lang_id() == LANG_PHP || get_lang_id() == LANG_GO)  ? "EOF" : "$EOF", YES);
   gsym[0]->value = 0;
   error_token = intern_gsym(intern_token("error"), YES);
-  start_prime = intern_gsym(get_lang_id() == LANG_PHP ? "start" : "$start", NO);
+  start_prime = intern_gsym((get_lang_id() == LANG_PHP || get_lang_id() == LANG_GO)  ? "start" : "$start", NO);
   start_sym = 0;
   cur_prec = 0;
   unioned = NO;

@@ -40,6 +40,7 @@
 #define LANG_CSHAPR	9
 #define LANG_AS		10
 #define LANG_HSP	11
+#define LANG_GO	  12
 
 #endif /* global */
 
@@ -109,6 +110,7 @@ private LANGMAP langmap[] = {
   { LANG_CSHARP, "csharp", ".cs", ".csy" },
   { LANG_AS, "as", ".as", ".asy" },
   { LANG_HSP, "hsp", ".hsp", ".hspy" },
+  { LANG_GO, "go", ".go", ".goy" },
   { -1, NULL, NULL, NULL }
 };
 
@@ -369,7 +371,13 @@ void print_array(short *p, int n, char *indent)
   for (i = 0; i < n; i++) {
     if (col == 0)
       fprintf(ofp, "%s", indent);
-    fprintf(ofp, i + 1 == n ? "%5d" : "%5d,", p[i]);
+
+    if (get_lang_id() == LANG_GO) {
+      fprintf(ofp, "%5d,", p[i]);
+    } else {
+      fprintf(ofp, i + 1 == n ? "%5d" : "%5d,", p[i]);
+    }
+
     if (++col == 10) {
       if(get_lang_id() == LANG_PYTHON || get_lang_id() == LANG_HSP)
         fprintf(ofp, " \\");
@@ -585,6 +593,9 @@ void gen_list_var(char *indent, char *var)
     }
     if ( get_lang_id() == LANG_HSP )
         fprintf(ofp, "\\" );
+    if ( get_lang_id() == LANG_GO )
+        fprintf(ofp, "," );
+
     fprintf(ofp, "\n");
   }
   else if (strcmp(var, "nonterminals") == 0) {
@@ -932,6 +943,8 @@ global void parser_generate()
             fprintf(ofp, " %s", quote(gsym[*s]->name));
           if ( get_lang_id() == LANG_HSP )
             fputs(i + 1 == nprods ? "\"\n" : "\",\\\n", ofp);
+          else if ( get_lang_id() == LANG_GO )
+            fputs("\",\n", ofp);
           else
             fputs(i + 1 == nprods ? "\"\n" : "\",\n", ofp);
         }
